@@ -161,7 +161,7 @@ void lk_parser_parse(const lk_parser_t* parser, int argc, char** argv)
             // execute if it worked
             if (parser->options[index]->kind == LK_KIND_EXPECTS_ARG) {
                 if (parser->options[index]->args_callback) {
-                    assert(argc < i + 1);
+                    assert(argc > i + 1);
                     parser->options[index]->args_callback(argv[i + 1]);
                 }
             } else {
@@ -199,9 +199,23 @@ LK_RESULT lk_parser_option_init_no_args(lk_parser_option_t* option, const char s
     if (!option || !multi || !explanation) {
         return LK_ERROR;
     }
+    option->kind = LK_KIND_NO_ARG;
     option->single = single;
     option->multi = multi;
     option->explanation = explanation;
     option->no_args_callback = callback;
+    return LK_OK;
+}
+
+LK_RESULT lk_parser_option_init_args(lk_parser_option_t* option, const char single, const char* multi, const char* explanation, lk_parser_void_fn_voidptr_t callback)
+{
+    if (!option || !multi || !explanation) {
+        return LK_ERROR;
+    }
+    option->kind = LK_KIND_EXPECTS_ARG;
+    option->single = single;
+    option->multi = multi;
+    option->explanation = explanation;
+    option->args_callback = callback;
     return LK_OK;
 }
