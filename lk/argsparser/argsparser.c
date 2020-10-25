@@ -199,7 +199,6 @@ LK_RESULT lk_parser_option_init_no_args(lk_parser_option_t* option, const char s
     if (!option || !multi || !explanation) {
         return LK_ERROR;
     }
-    memset(option, 0, sizeof(*option));
     option->single = single;
     option->multi = multi;
     option->explanation = explanation;
