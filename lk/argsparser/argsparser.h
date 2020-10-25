@@ -36,7 +36,7 @@ LK_RESULT lk_parser_init(lk_parser_t* parser);
 LK_RESULT lk_parser_add_option(lk_parser_t* parser, lk_parser_option_t* option);
 // parses the arguments given to it. returns an index of parser->options_size on error.
 // asserts parser being non-NULL.
-void lk_parser_parse(const lk_parser_t* parser, int argc, char** argv);
+int lk_parser_parse(const lk_parser_t* parser, int argc, char** argv);
 // prints the help.
 void lk_parser_print_help(const lk_parser_t* parser, const char* name);
 

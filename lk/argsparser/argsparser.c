@@ -118,13 +118,15 @@ static bool handle_long_arg(const lk_parser_t* parser, const char* str, size_t* 
     }
 }
 
-void lk_parser_parse(const lk_parser_t* parser, int argc, char** argv)
+int lk_parser_parse(const lk_parser_t* parser, int argc, char** argv)
 {
     assert(parser);
     assert(parser->options);
 
     size_t index;
     bool found = false;
+
+    int consumed = 0;
 
     if (argc == 1) {
     } else {
@@ -161,14 +163,19 @@ void lk_parser_parse(const lk_parser_t* parser, int argc, char** argv)
             // execute if it worked
             if (parser->options[index]->kind == LK_KIND_EXPECTS_ARG) {
                 if (parser->options[index]->args_callback) {
+                    // TODO: error instead of asserting
                     assert(argc > i + 1);
                     parser->options[index]->args_callback(argv[i + 1]);
+                    // skip next option no matter what, as it was an argument to the i-th option.
+                    consumed += 1;
+                    i += 1;
                 }
             } else {
                 if (parser->options[index]->no_args_callback) {
                     parser->options[index]->no_args_callback();
                 }
             }
+            consumed += 1;
         }
     }
 
@@ -176,6 +183,8 @@ void lk_parser_parse(const lk_parser_t* parser, int argc, char** argv)
         lk_parser_print_help(parser, argv[0]);
     } else {
     }
+
+    return consumed;
 }
 
 void lk_parser_print_help(const lk_parser_t* parser, const char* name)
@@ -187,10 +196,17 @@ void lk_parser_print_help(const lk_parser_t* parser, const char* name)
         assert(parser->options[i]);
         assert(parser->options[i]->multi);
         assert(parser->options[i]->explanation);
-        printf(LK_FMT_BOLD "\t-%c  \t--%s" LK_FMT_OFF "  \t%s\n",
-            parser->options[i]->single,
-            parser->options[i]->multi,
-            parser->options[i]->explanation);
+        if (parser->options[i]->kind == LK_KIND_NO_ARG) {
+            printf(LK_FMT_BOLD "\t-%c  \t\t--%s" LK_FMT_OFF "  \t\t %s\n",
+                parser->options[i]->single,
+                parser->options[i]->multi,
+                parser->options[i]->explanation);
+        } else {
+            printf(LK_FMT_BOLD "\t-%c " LK_FMT_OFF "<value>" LK_FMT_BOLD "\t--%s" LK_FMT_OFF " <value>\t %s\n",
+                parser->options[i]->single,
+                parser->options[i]->multi,
+                parser->options[i]->explanation);
+        }
     }
 }
 

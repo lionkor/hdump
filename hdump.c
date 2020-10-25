@@ -1,5 +1,10 @@
 #include <assert.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "lk/argsparser/argsparser.h"
 
@@ -10,9 +15,11 @@ void print_help()
     lk_parser_print_help(&parser, "hdump");
 }
 
-void print_arg_test(void* val)
+static int columns = 16;
+
+void set_columns(void* str)
 {
-    printf("%s called with %s\n", __func__, (char*)val);
+    columns = atoi((char*)str);
 }
 
 int main(int argc, char** argv)
@@ -29,23 +36,44 @@ int main(int argc, char** argv)
     res = lk_parser_add_option(&parser, &help_option);
     assert(res == LK_OK);
 
-    lk_parser_option_t dummy_option;
-    lk_parser_option_init_no_args(&dummy_option,
-        'd',
-        "dummy",
-        "does nothing",
-        NULL);
-    res = lk_parser_add_option(&parser, &dummy_option);
-    assert(res == LK_OK);
-
     lk_parser_option_t test_option;
     lk_parser_option_init_args(&test_option,
-        't',
-        "test",
-        "expects an argument!",
-        print_arg_test);
+        'c',
+        "columns",
+        "the number of bytes per row (columns), default 16",
+        set_columns);
     res = lk_parser_add_option(&parser, &test_option);
     assert(res == LK_OK);
 
-    lk_parser_parse(&parser, argc, argv);
+    int consumed = lk_parser_parse(&parser, argc, argv);
+
+    // get the last argument
+
+    if (argc - 1 > consumed) {
+        const char* filename = argv[argc - 1];
+        FILE* f = fopen(filename, "rb");
+        if (!f) {
+            printf("Error: file \"%s\" could not be opened: %s\n", filename, strerror(errno));
+            return errno;
+        }
+        uint8_t* buf = (uint8_t*)calloc(columns, sizeof(uint8_t));
+        assert(buf);
+        bool end = false;
+        while (!end) {
+            memset(buf, 0, columns * sizeof(uint8_t));
+            size_t n = fread(buf, sizeof(uint8_t), columns, f);
+            if (n != columns) {
+                end = true;
+            }
+            for (size_t i = 0; i < n; ++i) {
+                printf("%02x ", buf[i]);
+            }
+            printf("\n");
+        }
+        free(buf);
+        fclose(f);
+    } else {
+        printf("Error: no file name specified. file name should be last argument.\n");
+        return -1;
+    }
 }
