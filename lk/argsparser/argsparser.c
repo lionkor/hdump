@@ -60,7 +60,6 @@ static size_t find_index_of_long_arg(const lk_parser_t* parser, const char* str)
         if (strcmp(parser->options[i]->multi, str) == 0) {
             return i;
         } else {
-            printf("INFO: long arg _%s_ != _%s_\n", parser->options[i]->multi, str);
         }
     }
     return parser->options_size;
@@ -77,7 +76,6 @@ static size_t find_index_of_short_arg(const lk_parser_t* parser, const char c)
         if (parser->options[i]->single == c) {
             return i;
         } else {
-            printf("INFO: short arg _%c_ != _%c_\n", parser->options[i]->single, c);
         }
     }
     return parser->options_size;

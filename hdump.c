@@ -1,26 +1,34 @@
 #include <assert.h>
 #include <errno.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "lk/argsparser/argsparser.h"
 
 static lk_parser_t parser;
 static int row_count_padding = 8;
+static int columns = 16;
+static bool show_ascii = false;
 
 void print_help()
 {
     lk_parser_print_help(&parser, "hdump");
 }
 
-static int columns = 16;
-
 void set_columns(void* str)
 {
     columns = atoi((char*)str);
+}
+
+void enable_ascii()
+{
+    show_ascii = true;
 }
 
 int main(int argc, char** argv)
@@ -37,13 +45,22 @@ int main(int argc, char** argv)
     res = lk_parser_add_option(&parser, &help_option);
     assert(res == LK_OK);
 
-    lk_parser_option_t test_option;
-    lk_parser_option_init_args(&test_option,
+    lk_parser_option_t columns_option;
+    lk_parser_option_init_args(&columns_option,
         'c',
         "columns",
         "the number of bytes per row (columns), default 16",
         set_columns);
-    res = lk_parser_add_option(&parser, &test_option);
+    res = lk_parser_add_option(&parser, &columns_option);
+    assert(res == LK_OK);
+
+    lk_parser_option_t ascii_option;
+    lk_parser_option_init_no_args(&ascii_option,
+        'a',
+        "ascii",
+        "enables ascii view to the right of the hex display",
+        enable_ascii);
+    res = lk_parser_add_option(&parser, &ascii_option);
     assert(res == LK_OK);
 
     int consumed = lk_parser_parse(&parser, argc, argv);
@@ -61,6 +78,12 @@ int main(int argc, char** argv)
         assert(buf);
         bool end = false;
         size_t rows = 0;
+
+        struct stat file_stat;
+        stat(filename, &file_stat);
+        size_t file_size = (size_t)file_stat.st_size;
+        row_count_padding = (size_t)((log((double)file_size)) / log(16)) + 3;
+
         while (!end) {
             memset(buf, 0, columns * sizeof(uint8_t));
             size_t n = fread(buf, sizeof(uint8_t), columns, f);
@@ -68,14 +91,22 @@ int main(int argc, char** argv)
                 end = true;
             }
             printf("%0*x  ", row_count_padding, rows * columns);
-            for (size_t i = 0; i < n; ++i) {
-                printf("%02x ", buf[i]);
+            for (size_t i = 0; i < columns; ++i) {
+                if (i > n && n < columns) {
+                    printf("   ");
+                } else {
+                    printf("%02x ", buf[i]);
+                }
                 if (i != 0 && (i + 1) % 4 == 0) {
                     printf(" ");
                 }
                 if (i != 0 && (i + 1) % 8 == 0) {
                     printf(" ");
                 }
+            }
+            if (show_ascii) {
+                lk_sanitize_ascii(buf);
+                printf(" %s ", buf);
             }
             printf("\n");
             ++rows;

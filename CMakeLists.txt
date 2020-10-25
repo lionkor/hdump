@@ -12,4 +12,4 @@ add_executable(hdump
     hdump.c
 )
 
-target_link_libraries(hdump lk_argsparser)
+target_link_libraries(hdump lk_argsparser lk_stringops m)
