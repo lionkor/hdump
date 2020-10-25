@@ -9,6 +9,7 @@
 #include "lk/argsparser/argsparser.h"
 
 static lk_parser_t parser;
+static int row_count_padding = 8;
 
 void print_help()
 {
@@ -59,16 +60,25 @@ int main(int argc, char** argv)
         uint8_t* buf = (uint8_t*)calloc(columns, sizeof(uint8_t));
         assert(buf);
         bool end = false;
+        size_t rows = 0;
         while (!end) {
             memset(buf, 0, columns * sizeof(uint8_t));
             size_t n = fread(buf, sizeof(uint8_t), columns, f);
-            if (n != columns) {
+            if (n != (size_t)columns) {
                 end = true;
             }
+            printf("%0*x  ", row_count_padding, rows * columns);
             for (size_t i = 0; i < n; ++i) {
                 printf("%02x ", buf[i]);
+                if (i != 0 && (i + 1) % 4 == 0) {
+                    printf(" ");
+                }
+                if (i != 0 && (i + 1) % 8 == 0) {
+                    printf(" ");
+                }
             }
             printf("\n");
+            ++rows;
         }
         free(buf);
         fclose(f);
