@@ -19,7 +19,7 @@ static bool show_ascii = false;
 
 void print_help()
 {
-    lk_parser_print_help(&parser, "hdump");
+    lk_parser_print_help(&parser, "hdump", "<file>");
     printf(LK_FMT_BOLD "COPYRIGHT\n" LK_FMT_OFF "\tCopyright (c) 2020 Lion Kortlepel. Licensed under GNU GPL v3.0.\n");
     exit(0);
 }

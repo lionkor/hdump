@@ -38,7 +38,7 @@ LK_RESULT lk_parser_add_option(lk_parser_t* parser, lk_parser_option_t* option);
 // asserts parser being non-NULL.
 int lk_parser_parse(const lk_parser_t* parser, int argc, char** argv);
 // prints the help.
-void lk_parser_print_help(const lk_parser_t* parser, const char* name);
+void lk_parser_print_help(const lk_parser_t* parser, const char* name, const char* non_option_args);
 
 LK_RESULT lk_parser_option_init_no_args(lk_parser_option_t* option, const char single, const char* multi, const char* explanation, lk_parser_void_fn_void_t callback);
 LK_RESULT lk_parser_option_init_args(lk_parser_option_t* option, const char single, const char* multi, const char* explanation, lk_parser_void_fn_voidptr_t callback);

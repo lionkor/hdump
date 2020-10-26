@@ -185,10 +185,13 @@ int lk_parser_parse(const lk_parser_t* parser, int argc, char** argv)
     return consumed;
 }
 
-void lk_parser_print_help(const lk_parser_t* parser, const char* name)
+void lk_parser_print_help(const lk_parser_t* parser, const char* name, const char* non_option_args)
 {
     assert(name);
-    printf("%sUSAGE%s\n\t%s%s%s [OPTIONS]\n", LK_FMT_BOLD, LK_FMT_OFF, LK_FMT_BOLD, name, LK_FMT_OFF);
+    if (!non_option_args) {
+        non_option_args = "";
+    }
+    printf("%sUSAGE%s\n\t%s%s%s [OPTIONS] %s\n", LK_FMT_BOLD, LK_FMT_OFF, LK_FMT_BOLD, name, LK_FMT_OFF, non_option_args);
     printf(LK_FMT_BOLD "OPTIONS\n" LK_FMT_OFF);
     for (size_t i = 0; i < parser->options_size; ++i) {
         assert(parser->options[i]);
