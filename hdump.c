@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "lk/ansi_format.h"
 #include "lk/argsparser/argsparser.h"
 
 static lk_parser_t parser;
@@ -19,6 +20,8 @@ static bool show_ascii = false;
 void print_help()
 {
     lk_parser_print_help(&parser, "hdump");
+    printf(LK_FMT_BOLD "COPYRIGHT\n" LK_FMT_OFF "\tCopyright (c) 2020 Lion Kortlepel. Licensed under GNU GPL v3.0.\n");
+    exit(0);
 }
 
 void set_columns(void* str)
