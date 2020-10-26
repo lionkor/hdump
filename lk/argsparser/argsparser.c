@@ -178,7 +178,7 @@ int lk_parser_parse(const lk_parser_t* parser, int argc, char** argv)
     }
 
     if (!found) {
-        lk_parser_print_help(parser, argv[0]);
+        //lk_parser_print_help(parser, argv[0]);
     } else {
     }
 
