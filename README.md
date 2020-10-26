@@ -2,6 +2,19 @@
 
 A unix hex-dump utility written in C.
 
+```
+$ hdump --help
+USAGE
+	hdump [OPTIONS] <file>
+OPTIONS
+	-h  		--help  		 displays this help
+	-c <value>	--columns <value>	 the number of bytes per row (columns), default 16
+	-a  		--ascii  		 enables ascii view to the right of the hex display
+COPYRIGHT
+	Copyright (c) 2020 Lion Kortlepel. Licensed under GNU GPL v3.0.
+
+```
+
 ## How to Build
 
 ### Requirements
