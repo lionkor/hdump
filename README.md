@@ -37,7 +37,7 @@ Next up: [Installing](#installing)
 ### Building, all in one
 copy, paste and run:
 ```
-git clone https://github.com/lionkor/hdump && cd hdump && cmake -S . -B bin && make -j 5 -C bin && cd..
+git clone https://github.com/lionkor/hdump && cd hdump && cmake -S . -B bin && make -j 5 -C bin && cd ..
 ```
 
 Next up: [Installing](#installing)
