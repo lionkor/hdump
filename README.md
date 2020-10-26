@@ -5,7 +5,7 @@ A unix hex-dump utility written in C.
 ## How to Build
 
 ### Requirements
-* an OS with `<unistd.h>` and `<sys/stat>`
+* an OS with `<unistd.h>` and `<sys/stat.h>`
 * a C compiler supporting C17
 * `cmake`
 * `make`
