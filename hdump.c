@@ -11,6 +11,7 @@
 
 #include "lk/ansi_format.h"
 #include "lk/argsparser/argsparser.h"
+#include "lk/stringops.h"
 
 static lk_parser_t parser;
 static int row_count_padding = 8;
@@ -112,8 +113,10 @@ int main(int argc, char** argv)
                 }
             }
             if (show_ascii) {
-                lk_sanitize_ascii(buf);
-                printf(" %s ", buf);
+                lk_sanitize_ascii((char*)buf, columns);
+                for (size_t i = 0; i < columns; ++i) {
+                    putchar(buf[i]);
+                }
             }
             printf("\n");
             ++rows;

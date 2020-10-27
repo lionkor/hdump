@@ -8,9 +8,10 @@
 void lk_sanitize_ascii(char* buffer, size_t size)
 {
     assert(buffer);
-    for (size_t i = 0; buffer[i] && i < size; ++i) {
-        if (iscntrl(buffer[i])) {
-            buffer[i] = ' ';
+    for (size_t i = 0; i < size; ++i) {
+        if (buffer[i] == 0 || !isprint(buffer[i])) {
+            buffer[i] = '.';
+        } else {
         }
     }
 }
