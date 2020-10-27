@@ -85,6 +85,10 @@ int main(int argc, char** argv)
         struct stat file_stat;
         stat(filename, &file_stat);
         size_t file_size = (size_t)file_stat.st_size;
+        if (file_size == 0) {
+            printf("\"%s\" is empty.\n", filename);
+            return 0;
+        }
         row_count_padding = (size_t)((log((double)file_size)) / log(16)) + 3;
 
         while (!end) {
@@ -95,7 +99,7 @@ int main(int argc, char** argv)
             }
             printf("%0*x  ", row_count_padding, rows * columns);
             for (size_t i = 0; i < columns; ++i) {
-                if (i > n && n < columns) {
+                if (i >= n && n < columns) {
                     printf("   ");
                 } else {
                     printf("%02x ", buf[i]);
