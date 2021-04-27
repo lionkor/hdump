@@ -98,7 +98,7 @@ int main(int argc, char** argv)
             if (n != (size_t)columns) {
                 end = true;
             }
-            printf("%0*x  ", row_count_padding, rows * columns);
+            printf("%0*lx  ", row_count_padding, rows * columns);
             for (size_t i = 0; i < columns; ++i) {
                 if (i >= n && n < columns) {
                     printf("   ");
