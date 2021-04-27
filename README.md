@@ -1,6 +1,6 @@
 # hdump
 
-A unix hex-dump utility written in C.
+A unix-y hex-dump utility written in C.
 
 ```
 $ hdump --help
